@@ -1,11 +1,15 @@
 package com.flightbookingsystem.service;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.amadeus.Amadeus;
 import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.resources.FlightOfferSearch;
+import com.flightbookingsystem.model.FlightBookingDetails;
 
 @Service
 public class FlightBookingService {
@@ -33,6 +37,25 @@ public class FlightBookingService {
 		}
 		
 		return flightOffersSearches;
+	}
+
+	public List<FlightOfferSearch> getFlightOffers(FlightBookingDetails details) {
+		
+		FlightOfferSearch[] flightOffersSearches = null;
+				
+			try {
+				flightOffersSearches = amadeus.shopping.flightOffersSearch.get(
+				          Params.with("originLocationCode", details.getOriginLocationCode())
+				                  .and("destinationLocationCode", details.getDestinationLocationCode())
+				                  .and("departureDate", details.getDepartureDate())
+				                  .and("returnDate", details.getReturnDate())
+				                  .and("adults", details.getAdults())
+				                  .and("max", details.getMax()));
+			} catch (ResponseException e) {
+				e.printStackTrace();
+		    }
+				
+		return Arrays.asList(flightOffersSearches);
 	}
 
 }
